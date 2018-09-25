@@ -711,7 +711,7 @@ this.createjs = this.createjs||{};
 	 * @default 10000
 	 * @readonly
 	 */
-	StageGL.DEFAULT_MAX_BATCH_SIZE = 1024;
+	StageGL.DEFAULT_MAX_BATCH_SIZE = 8*1024;
 
 	/**
 	 * The maximum size WebGL allows for element index numbers. Uses a 16 bit unsigned integer. It takes 6 indices to
@@ -2942,19 +2942,19 @@ this.createjs = this.createjs||{};
 
 		gl.bindBuffer(gl.ARRAY_BUFFER, vertexPositionBuffer);
 		gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, vertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
-		gl.bufferSubData(gl.ARRAY_BUFFER, 0, this._vertices);
+		gl.bufferSubData(gl.ARRAY_BUFFER, 0, this._vertices.subarray(0,this._batchVertexCount*2));
 
 		gl.bindBuffer(gl.ARRAY_BUFFER, textureIndexBuffer);
 		gl.vertexAttribPointer(shaderProgram.textureIndexAttribute, textureIndexBuffer.itemSize, gl.FLOAT, false, 0, 0);
-		gl.bufferSubData(gl.ARRAY_BUFFER, 0, this._indices);
+		gl.bufferSubData(gl.ARRAY_BUFFER, 0, this._indices.subarray(0,this._batchVertexCount));
 
 		gl.bindBuffer(gl.ARRAY_BUFFER, uvPositionBuffer);
 		gl.vertexAttribPointer(shaderProgram.uvPositionAttribute, uvPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
-		gl.bufferSubData(gl.ARRAY_BUFFER, 0, this._uvs);
+		gl.bufferSubData(gl.ARRAY_BUFFER, 0, this._uvs.subarray(0,this._batchVertexCount*2));
 
 		gl.bindBuffer(gl.ARRAY_BUFFER, alphaBuffer);
 		gl.vertexAttribPointer(shaderProgram.alphaAttribute, alphaBuffer.itemSize, gl.FLOAT, false, 0, 0);
-		gl.bufferSubData(gl.ARRAY_BUFFER, 0, this._alphas);
+		gl.bufferSubData(gl.ARRAY_BUFFER, 0, this._alphas.subarray(0,this._batchVertexCount));
 
 		gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, gl.FALSE, this._projectionMatrix);
 
