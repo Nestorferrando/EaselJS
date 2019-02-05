@@ -608,18 +608,29 @@ this.createjs = this.createjs||{};
 		var start = (target !== -1 && onlyTarget)?(target):(0);
 		var end = (target !== -1 && onlyTarget)?(target+1):(spritesheet._frames.length);
 		var upsampling = 1;
-		if (spritesheet.halfSize) upsampling = 2;
+		if (spritesheet.halfSize) upsampling = 0.5;
 		for (var i=start; i<end; i++) {
-			var f = spritesheet._frames[i];
-			if (f.uvRect || f.image.width <= 0 || f.image.height <= 0) { continue; }
+			  var f = spritesheet._frames[i];
+			  if (f.uvRect || f.image.width <= 0 || f.image.height <= 0) { continue; }
 
-			var r = f.rect;
-			f.uvRect = {
-				t: 1 - (r.y / (f.image.height * upsampling) ),
-				l: r.x / (f.image.width* upsampling),
-				b: 1 - ((r.y + r.height) / (f.image.height* upsampling)),
-				r: (r.x + r.width) / (f.image.width * upsampling)
-			};
+			  var r = f.rect;
+			  f.uvRect = {
+				t: 1 - (r.y * upsampling / f.image.height ),
+				b: 1 - ((r.y + r.height)* upsampling / f.image.height),
+				l: r.x * upsampling / f.image.width,
+				r: (r.x + r.width) * upsampling / f.image.width 
+			  };
+			  
+			  if (spritesheet.halfSize){
+				var texSize=spritesheet._images[0].width
+				f.uvRect.l = (Math.ceil(f.uvRect.l * texSize)+1)/texSize
+				f.uvRect.b = (Math.ceil(f.uvRect.b*texSize)+1)/texSize
+			  }
+
+			  
+			  //
+			
+			  //f.uvRect.t = (Math.floor(f.uvRect.t*4096)-1)/4096
 		}
 
 		return spritesheet._frames[(target !== -1) ? target : 0].uvRect || {t:0, l:0, b:1, r:1};
